@@ -1,4 +1,4 @@
-package TrabalhoOTM1;
+package OTM1.Algoritmo;
 
 public class Aresta {
     public Vertice v1;

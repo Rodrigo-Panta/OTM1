@@ -1,4 +1,4 @@
-package TrabalhoOTM1;
+package OTM1.Algoritmo;
 
 import java.util.Vector;
 import java.util.HashMap;
@@ -28,12 +28,6 @@ public class Grafo {
             listaDeAdjacencia.put(aresta.v1.id, new Vector<>());
         }
         listaDeAdjacencia.get(aresta.v1.id).add(aresta);
-        
-        //Adiciona a aresta na lista de adjacência de v2
-        if(!listaDeAdjacencia.containsKey(aresta.v2.id)){
-            listaDeAdjacencia.put(aresta.v2.id, new Vector<>());
-        }
-        listaDeAdjacencia.get(aresta.v2.id).add(aresta);
     }
 
     public Vertice getM(){
@@ -70,18 +64,16 @@ public class Grafo {
     public Vector<Aresta> getAD(){
         Vector<Aresta> ad = new Vector<Aresta>();
         for(Aresta a: arestas) {
-            if( a.v1.tipo == TipoVertice.SENSOR && a.v2.tipo == TipoVertice.PONTO_DE_DEMANDA &&
-                a.v1.tipo == TipoVertice.PONTO_DE_DEMANDA && a.v2.tipo == TipoVertice.SENSOR) {
+            if( a.v1.tipo == TipoVertice.SENSOR && a.v2.tipo == TipoVertice.PONTO_DE_DEMANDA) {
                     ad.add(a);    
-                }
+            }
         }
         return ad;
     }
 
     public Aresta getAm(){
         for(Aresta a: arestas) {
-            if( a.v1.tipo == TipoVertice.SENSOR && a.v2.tipo == TipoVertice.SINK &&
-                a.v1.tipo == TipoVertice.SINK && a.v2.tipo == TipoVertice.SENSOR) {
+            if(a.v1.tipo == TipoVertice.SINK && a.v2.tipo == TipoVertice.SENSOR) {
                     return a;
                 }
         }
@@ -92,7 +84,7 @@ public class Grafo {
         Vector<Aresta> aD = getAD();
         Vector<Aresta> inD = new Vector<Aresta>();
         for(Aresta a: aD){
-            if(a.v1.id == idPontoDeDemanda || a.v2.id == idPontoDeDemanda)
+            if(a.v2.id == idPontoDeDemanda)
                 inD.add(a);
         }
         return inD;
@@ -102,7 +94,7 @@ public class Grafo {
         Vector<Aresta> aD = getAD();
         Vector<Aresta> inD = new Vector<Aresta>();
         for(Aresta a: aD){
-            if(a.v1.id == idPontoDeDemanda || a.v2.id == idPontoDeDemanda)
+            if(a.v1.id == idPontoDeDemanda)
                 inD.add(a);
         }
         return inD;
@@ -112,7 +104,7 @@ public class Grafo {
         Vector<Aresta> aS = getAS();
         Vector<Aresta> inS = new Vector<Aresta>();
         for(Aresta a: aS){
-            if(a.v1.id == idSensor || a.v2.id == idSensor)
+            if(a.v2.id == idSensor)
                 inS.add(a);
         }
         return inS;
