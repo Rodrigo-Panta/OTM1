@@ -1,36 +1,36 @@
 package OTM1.Algoritmo;
 
-import java.util.Vector;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.HashMap;
 
 public class Grafo {
     
     // O nó sorvedouro deve possuir id = 0
 
-    public HashSet<Vertice> sensores;
-    public HashSet<Vertice> pontosDeDemanda;
+    public HashMap<Long, Vertice> sensores;
+    public HashMap<Long, Vertice> pontosDeDemanda;
     public Vertice sink;    
     public HashSet<Aresta> arestas;
     public HashMap<Long, HashSet<Aresta>> listaDeAdjacencia;
 
-    public Grafo() {
+    public Grafo(long nSensores, long nPD) {
         listaDeAdjacencia = new HashMap<Long, HashSet<Aresta>>();
-        sensores = new HashSet<Vertice>();
-        pontosDeDemanda = new HashSet<Vertice>();
-        sink = new Vertice(TipoVertice.SINK, 0);
         arestas =  new HashSet<Aresta>();
+
+        sink = new Vertice(TipoVertice.SINK, 0);
+
+        sensores = new HashMap<Long, Vertice>();
+        for (long i = 1; i <= nSensores; i++) {
+            sensores.put(i, new Vertice(TipoVertice.SENSOR, i));
+        }
+
+        pontosDeDemanda = new HashMap<Long, Vertice>();
+        for (long i = 1; i <= nPD; i++) {
+            pontosDeDemanda.put(i+nSensores, new Vertice(TipoVertice.SENSOR, i+nSensores));
+        }
     }
 
     public void addAresta(Aresta aresta){
-        
-        if(aresta.v1.tipo == TipoVertice.SENSOR)
-            sensores.add(aresta.v1);
-        if(aresta.v2.tipo == TipoVertice.SENSOR)
-            sensores.add(aresta.v2);
-        else if(aresta.v2.tipo == TipoVertice.PONTO_DE_DEMANDA)
-            pontosDeDemanda.add(aresta.v1);
-        
         arestas.add(aresta);
 
         //Adiciona a aresta na lista de adjacência de v1
@@ -40,16 +40,24 @@ public class Grafo {
         listaDeAdjacencia.get(aresta.v1.id).add(aresta);
     }
 
+    public Vertice getSensor(long id) {
+        return sensores.get(id);
+    }
+
+    public Vertice getPD(long id){
+        return pontosDeDemanda.get(id);
+    }
+
     public Vertice getSink(){
         return sink; 
     }
 
-    public HashSet<Vertice> getS(){
-        return sensores;
+    public Vertice[] getS(){
+        return (Vertice[]) sensores.values().toArray();
     }
 
-    public HashSet<Vertice> getD(){
-        return pontosDeDemanda;
+    public Vertice[] getD(){
+        return (Vertice[]) pontosDeDemanda.values().toArray();
     }
 
     public HashSet<Aresta> getAS(){
@@ -91,7 +99,8 @@ public class Grafo {
         return inD;
     }
 
-    public  HashSet<Aresta> getOutD(long idPontoDeDemanda) {
+    // todo
+    public  HashSet<Aresta> getOutS(long idPontoDeDemanda) {
         HashSet<Aresta> aD = getAD();
         HashSet<Aresta> inD = new HashSet<Aresta>();
         for(Aresta a: aD){
@@ -114,4 +123,5 @@ public class Grafo {
     public HashSet<Aresta> getArestas() {
         return arestas;
     }
+
 }
