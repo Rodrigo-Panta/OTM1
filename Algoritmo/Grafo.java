@@ -99,17 +99,6 @@ public class Grafo {
         return inD;
     }
 
-    // todo
-    public  HashSet<Aresta> getOutS(long idPontoDeDemanda) {
-        HashSet<Aresta> aD = getAD();
-        HashSet<Aresta> inD = new HashSet<Aresta>();
-        for(Aresta a: aD){
-            if(a.v1.id == idPontoDeDemanda)
-                inD.add(a);
-        }
-        return inD;
-    }
-
     public  HashSet<Aresta> getInS(long idSensor) {
         HashSet<Aresta> aS = getAS();
         HashSet<Aresta> inS = new HashSet<Aresta>();
@@ -120,6 +109,17 @@ public class Grafo {
         return inS;
     }
 
+    public  HashSet<Aresta> getOutS(long idSensor) {
+        HashSet<Aresta> aS = getAS();
+        HashSet<Aresta> inS = new HashSet<Aresta>();
+        for(Aresta a: aS){
+            if(a.v1.id == idSensor)
+                inS.add(a);
+        }
+        return inS;
+    }
+
+    
     public HashSet<Aresta> getArestas() {
         return arestas;
     }

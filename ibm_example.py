@@ -25,3 +25,4 @@ m.maximize(12 * desk + 20 * cell)
 
 m.print_information()
 
+print(m.solve())
