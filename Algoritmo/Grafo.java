@@ -2,58 +2,58 @@ package OTM1.Algoritmo;
 
 import java.util.Vector;
 import java.util.HashMap;
+import java.util.HashSet;
 
 public class Grafo {
     
     // O nó sorvedouro deve possuir id = 0
 
-    public HashMap<Long, Vertice> vertices;    
-    public Vector<Aresta> arestas;
-    public HashMap<Long, Vector<Aresta>> listaDeAdjacencia;
+    public HashSet<Vertice> sensores;
+    public HashSet<Vertice> pontosDeDemanda;
+    public Vertice sink;    
+    public HashSet<Aresta> arestas;
+    public HashMap<Long, HashSet<Aresta>> listaDeAdjacencia;
 
     public Grafo() {
-        listaDeAdjacencia = new HashMap<Long, Vector<Aresta>>();
-        vertices = new HashMap<Long, Vertice>();
-        arestas =  new Vector<Aresta>();
+        listaDeAdjacencia = new HashMap<Long, HashSet<Aresta>>();
+        sensores = new HashSet<Vertice>();
+        pontosDeDemanda = new HashSet<Vertice>();
+        sink = new Vertice(TipoVertice.SINK, 0);
+        arestas =  new HashSet<Aresta>();
     }
-    
-    public void addAresta(Aresta aresta){
-        vertices.putIfAbsent(aresta.v1.id,aresta.v1);
-        vertices.putIfAbsent(aresta.v2.id,aresta.v2);
 
+    public void addAresta(Aresta aresta){
+        
+        if(aresta.v1.tipo == TipoVertice.SENSOR)
+            sensores.add(aresta.v1);
+        if(aresta.v2.tipo == TipoVertice.SENSOR)
+            sensores.add(aresta.v2);
+        else if(aresta.v2.tipo == TipoVertice.PONTO_DE_DEMANDA)
+            pontosDeDemanda.add(aresta.v1);
+        
         arestas.add(aresta);
 
         //Adiciona a aresta na lista de adjacência de v1
         if(!listaDeAdjacencia.containsKey(aresta.v1.id)){
-            listaDeAdjacencia.put(aresta.v1.id, new Vector<>());
+            listaDeAdjacencia.put(aresta.v1.id, new HashSet<Aresta>());
         }
         listaDeAdjacencia.get(aresta.v1.id).add(aresta);
     }
 
-    public Vertice getM(){
-        return vertices.get(0); 
+    public Vertice getSink(){
+        return sink; 
     }
 
-    public Vector<Vertice> getS(){
-        Vector<Vertice> s = new Vector<Vertice>();
-        for(Vertice v: vertices.values()) {
-            if(v.tipo == TipoVertice.SENSOR)
-                s.add(v);    
-        }
-        return s;
+    public HashSet<Vertice> getS(){
+        return sensores;
     }
 
-    public Vector<Vertice> getD(){
-        Vector<Vertice> d = new Vector<Vertice>();
-        for(Vertice v: vertices.values()) {
-            if(v.tipo == TipoVertice.PONTO_DE_DEMANDA)
-                d.add(v);    
-        }
-        return d;
+    public HashSet<Vertice> getD(){
+        return pontosDeDemanda;
     }
 
-    public Vector<Aresta> getAS(){
-        Vector<Aresta> as = new Vector<Aresta>();
+    public HashSet<Aresta> getAS(){
+        HashSet<Aresta> as = new HashSet<Aresta>();
         for(Aresta a: arestas) {
             if(a.v1.tipo == TipoVertice.SENSOR && a.v2.tipo == TipoVertice.SENSOR)
                 as.add(a);    
@@ -61,8 +61,8 @@ public class Grafo {
         return as;
     }
 
-    public Vector<Aresta> getAD(){
-        Vector<Aresta> ad = new Vector<Aresta>();
+    public HashSet<Aresta> getAD(){
+        HashSet<Aresta> ad = new HashSet<Aresta>();
         for(Aresta a: arestas) {
             if( a.v1.tipo == TipoVertice.SENSOR && a.v2.tipo == TipoVertice.PONTO_DE_DEMANDA) {
                     ad.add(a);    
@@ -71,18 +71,19 @@ public class Grafo {
         return ad;
     }
 
-    public Aresta getAm(){
+    public HashSet<Aresta> getAm(){
+         HashSet<Aresta> am = new HashSet<Aresta>();
         for(Aresta a: arestas) {
-            if(a.v1.tipo == TipoVertice.SINK && a.v2.tipo == TipoVertice.SENSOR) {
-                    return a;
-                }
+            if( a.v1.tipo == TipoVertice.SINK && a.v2.tipo == TipoVertice.SENSOR) {
+                    am.add(a);    
+            }
         }
-        return null;
+        return am;
     }
 
-    public  Vector<Aresta> getInD(long idPontoDeDemanda) {
-        Vector<Aresta> aD = getAD();
-        Vector<Aresta> inD = new Vector<Aresta>();
+    public  HashSet<Aresta> getInD(long idPontoDeDemanda) {
+        HashSet<Aresta> aD = getAD();
+        HashSet<Aresta> inD = new HashSet<Aresta>();
         for(Aresta a: aD){
             if(a.v2.id == idPontoDeDemanda)
                 inD.add(a);
@@ -90,9 +91,9 @@ public class Grafo {
         return inD;
     }
 
-    public  Vector<Aresta> getOutD(long idPontoDeDemanda) {
-        Vector<Aresta> aD = getAD();
-        Vector<Aresta> inD = new Vector<Aresta>();
+    public  HashSet<Aresta> getOutD(long idPontoDeDemanda) {
+        HashSet<Aresta> aD = getAD();
+        HashSet<Aresta> inD = new HashSet<Aresta>();
         for(Aresta a: aD){
             if(a.v1.id == idPontoDeDemanda)
                 inD.add(a);
@@ -100,9 +101,9 @@ public class Grafo {
         return inD;
     }
 
-    public  Vector<Aresta> getInS(long idSensor) {
-        Vector<Aresta> aS = getAS();
-        Vector<Aresta> inS = new Vector<Aresta>();
+    public  HashSet<Aresta> getInS(long idSensor) {
+        HashSet<Aresta> aS = getAS();
+        HashSet<Aresta> inS = new HashSet<Aresta>();
         for(Aresta a: aS){
             if(a.v2.id == idSensor)
                 inS.add(a);
@@ -110,7 +111,7 @@ public class Grafo {
         return inS;
     }
 
-    public Vector<Aresta> getArestas() {
+    public HashSet<Aresta> getArestas() {
         return arestas;
     }
 }
