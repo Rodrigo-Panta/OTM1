@@ -1,81 +1,57 @@
 package Algoritmo;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.HashSet;
 
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.util.List;
- 
-public class Teste
-{
+public class Teste {
+    private static double soma;
+    private static boolean[] visitados;
     public static void main(String[] args)
     {
-        String path = "./json/grafo.json";
- 
-        JSONObject json = new JSONObject();
-        try {
-            GeraGrafos geraGrafos = new GeraGrafos();
-            Grafo grafo = geraGrafos.gerar(6, 3);
-            System.out.println("Arestas: " + grafo.arestas.size());
-            json.put("grafo", grafoToJson(grafo));            
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
- 
-        try (PrintWriter out = new PrintWriter(new FileWriter(path))) {
-            out.write(json.toString().replace("\\", "").replace("\"{", "{").replace("}\"", "}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    public static String verticeToJson (Vertice vertice) {
-        JSONObject json = new JSONObject();
-        try {
-            json.put("id", vertice.id);
-            json.put("tipo", vertice.tipo.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return json.toString();
-    }
-    
-    public static String arestaToJson (Aresta aresta) {
-        JSONObject json = new JSONObject();
-        // System.out.println(aresta.v1.id);
-        // System.out.println(aresta.v2.id);
+        GeraGrafos geraGrafos = new GeraGrafos();
+        Grafo grafo = geraGrafos.gerar(6, 3);
+        GeraArquivoGrafo geraArquivo = new GeraArquivoGrafo();
+        geraArquivo.adicionar(grafo);
+        geraArquivo.gerar("grafoTeste");
 
-        try {
-            json.put("v1",aresta.v1.id);
-            json.put("v2", aresta.v2.id);
-            json.put("peso", String.format("%.2f", aresta.peso));
-        } catch (Exception e) {
-            e.printStackTrace();
+        visitados = new boolean[10];
+
+        HashSet<Long> idsPontosDeDemanda = new HashSet<Long>();
+        for(long i = 7; i <= 9; i++){
+            idsPontosDeDemanda.add(i);
         }
-        return json.toString();
+        soma = 0;
+        HashSet<Aresta> am = grafo.getAm();
+
+        for(Aresta arestaSink: am){
+            System.out.println(arestaSink.v1.id + " " + arestaSink.v2.id + ": " + arestaSink.peso);
+            if(idsPontosDeDemanda.isEmpty()) break;        
+            long caminhos = buscaEmProfundidade(arestaSink.v2, idsPontosDeDemanda, grafo);
+            soma+=caminhos*arestaSink.peso;
+        }    
+        System.out.println("Soma:" + soma);
+        System.out.println("Visitados: ");
+        for(var i: visitados) System.out.print(i + " ");
     }
     
-    public static String grafoToJson (Grafo grafo) {
-        JSONObject json = new JSONObject();
-        try {
-            for(Vertice v : grafo.sensores.values()) {
-                json.append("sensores", verticeToJson(v));
-            }
-            for(Vertice v : grafo.pontosDeDemanda.values()) {
-                json.append("pontosDeDemanda", verticeToJson(v));
-            }
-            json.append("sink", verticeToJson(grafo.sink));
-            for(Aresta a : grafo.arestas) {
-                json.append("arestas", arestaToJson(a));
-            }
+    public static long buscaEmProfundidade(Vertice v, HashSet<Long> idsPontosDeDemanda, Grafo grafo) {
+        if(visitados[(int) v.id]) return 0;
+        visitados[(int) v.id] = true;
+
+            long caminhos = 0;
+        for(Aresta a: grafo.listaDeAdjacencia.get(v.id)){
+            if(idsPontosDeDemanda.isEmpty()) break;        
             
-        } catch (Exception e) {
-            e.printStackTrace();
+            if(a.v2.tipo ==TipoVertice.PONTO_DE_DEMANDA){
+                visitados[(int) a.v2.id] = true;
+                idsPontosDeDemanda.remove(a.v2.id);
+                soma+=a.peso;
+                caminhos++;
+            } else {
+                long caminhosV2 = buscaEmProfundidade(a.v2, idsPontosDeDemanda, grafo);
+                caminhos+=caminhosV2;
+                soma+=(caminhosV2*a.peso);
+            } 
         }
-        return json.toString();
+        return caminhos;
     }
-
-    
-    
 }

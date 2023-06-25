@@ -48,7 +48,7 @@ public class GeraGrafos {
 
     private void geraConexoesPD(Grafo grafo){
         Random random = new Random();
-        for (long i = 1+tamS; i <= tamD; i++) {
+        for (long i = 1+tamS; i <= tamD+tamS; i++) {
             long nConexoes = Math.max(1, random.nextLong(maxConexoesPD));
             for (long x = 0; x < nConexoes; x++) {
                 long j = random.nextLong(tamS) + 1;
