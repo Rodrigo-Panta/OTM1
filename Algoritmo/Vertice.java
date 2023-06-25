@@ -1,4 +1,6 @@
-package OTM1.Algoritmo;
+package Algoritmo;
+
+import Algoritmo.TipoVertice;
 
 public class Vertice {
     public long id;
@@ -8,4 +10,5 @@ public class Vertice {
         this.id = id;
         this.tipo = tipo;
     }
+    
 }

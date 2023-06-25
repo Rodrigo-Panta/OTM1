@@ -1,4 +1,4 @@
-package OTM1.Algoritmo;
+package Algoritmo;
 
 public enum TipoVertice {
     PONTO_DE_DEMANDA,

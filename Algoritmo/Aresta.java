@@ -1,4 +1,6 @@
-package OTM1.Algoritmo;
+package Algoritmo;
+
+import Algoritmo.Vertice;
 
 public class Aresta {
     public Vertice v1;

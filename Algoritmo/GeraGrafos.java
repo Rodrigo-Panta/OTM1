@@ -1,4 +1,4 @@
-package OTM1.Algoritmo;
+package Algoritmo;
 
 import java.util.Random;
 
@@ -26,7 +26,7 @@ public class GeraGrafos {
         geraConexoesPD(grafo);        
         geraConexoesM(grafo);
 
-        return null;
+        return grafo;
 
     }
 
@@ -36,7 +36,7 @@ public class GeraGrafos {
             long nConexoes = Math.max(1, random.nextLong(maxConexoesSensores));
             for (long x = 0; x < nConexoes; x++) {
                 long j = random.nextLong(tamS) + 1;
-                if(i==j) continue;
+                if(i==j || grafo.containsAresta(i,j)) continue;
                 Vertice v1 = grafo.getSensor(i);
                 Vertice v2 = grafo.getSensor(j);
                 double peso = random.nextDouble(maxPeso);
@@ -48,11 +48,10 @@ public class GeraGrafos {
 
     private void geraConexoesPD(Grafo grafo){
         Random random = new Random();
-        for (long i = 1; i <= tamD; i++) {
+        for (long i = 1+tamS; i <= tamD; i++) {
             long nConexoes = Math.max(1, random.nextLong(maxConexoesPD));
             for (long x = 0; x < nConexoes; x++) {
                 long j = random.nextLong(tamS) + 1;
-                if(i==j) continue;
                 Vertice v1 = grafo.getPD(i);
                 Vertice v2 = grafo.getSensor(j);
                 double peso = random.nextDouble(maxPeso/2);
