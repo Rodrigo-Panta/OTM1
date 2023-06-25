@@ -27,7 +27,7 @@ public class Grafo {
 
         pontosDeDemanda = new HashMap<Long, Vertice>();
         for (long i = 1; i <= nPD; i++) {
-            pontosDeDemanda.put(i + nSensores, new Vertice(TipoVertice.SENSOR, i + nSensores));
+            pontosDeDemanda.put(i + nSensores, new Vertice(TipoVertice.PONTO_DE_DEMANDA, i + nSensores));
         }
     }
 
